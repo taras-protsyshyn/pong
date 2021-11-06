@@ -171,6 +171,7 @@ function animate() {
 function loadGame() {
   createCanvas();
   renderIntro();
+  console.log("ready");
   socket.emit("ready");
 }
 
