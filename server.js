@@ -18,10 +18,15 @@ io.on("connection", (socket) => {
 
     if (playerCounter === 2) {
       io.emit("startGame", socket.id);
+      playerCounter = 0;
     }
   });
 
   socket.on("paddleMove", (paddleData) => {
     socket.broadcast.emit("paddleMove", paddleData);
+  });
+
+  socket.on("ballMove", (ballData) => {
+    socket.broadcast.emit("ballMove", ballData);
   });
 });

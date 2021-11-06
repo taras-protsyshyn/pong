@@ -91,6 +91,8 @@ function ballReset() {
   ballX = width / 2;
   ballY = height / 2;
   speedY = 3;
+
+  sendBallMove();
 }
 
 // Adjust Ball Movement
@@ -101,6 +103,7 @@ function ballMove() {
   if (playerMoved) {
     ballX += speedX;
   }
+  sendBallMove();
 }
 
 // Determine What Ball Bounces Off, Score Points, Reset Ball
@@ -156,9 +159,11 @@ function ballBoundaries() {
 
 // Called Every Frame
 function animate() {
-  ballMove();
+  if (isReferee) {
+    ballMove();
+    ballBoundaries();
+  }
   renderCanvas();
-  ballBoundaries();
   window.requestAnimationFrame(animate);
 }
 
@@ -190,6 +195,10 @@ function startGame() {
 // On Load
 loadGame();
 
+function sendBallMove() {
+  socket.emit("ballMove", { ballX, ballY, score });
+}
+
 socket.on("startGame", (refereeId) => {
   console.log("Referee is", refereeId);
   isReferee = refereeId === socket.id;
@@ -199,4 +208,8 @@ socket.on("startGame", (refereeId) => {
 socket.on("paddleMove", (paddleData) => {
   const opponentPaddleIndex = 1 - paddleIndex;
   paddleX[opponentPaddleIndex] = paddleData.xPosition;
+});
+
+socket.on("ballMove", (ballData) => {
+  ({ ballX, ballY, score } = ballData);
 });
