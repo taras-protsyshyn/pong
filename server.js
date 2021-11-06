@@ -16,9 +16,8 @@ io.on("connection", (socket) => {
     console.log("Player ready", socket.id);
     playerCounter++;
 
-    if (playerCounter === 2) {
+    if (playerCounter % 2 === 0) {
       io.emit("startGame", socket.id);
-      playerCounter = 0;
     }
   });
 
@@ -27,6 +26,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ballMove", (ballData) => {
+    socket.broadcast.emit("ballMove", ballData);
+  });
+
+  socket.on("disconnect", (reason) => {
     socket.broadcast.emit("ballMove", ballData);
   });
 });
