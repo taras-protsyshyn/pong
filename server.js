@@ -8,6 +8,16 @@ server.listen(PORT, HOSTNAME, () => {
   console.log(`Server running at http://${HOSTNAME}:${PORT}/`);
 });
 
-io.on("connection", (client) => {
-  console.log("user connected", client);
+let playerCounter = 0;
+
+io.on("connection", (socket) => {
+  console.log("user connected", socket.id);
+  socket.on("ready", () => {
+    console.log("Player ready", socket.id);
+    playerCounter++;
+
+    if (playerCounter === 2) {
+      io.emit("startGame", socket.id);
+    }
+  });
 });
